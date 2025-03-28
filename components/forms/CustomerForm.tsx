@@ -3,23 +3,29 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Button } from "@/components/ui/button"
 import {
     Form
 } from "@/components/ui/form"
 import CustomForm from "../CustomForm"
+import { useState } from "react"
+import SubmitButton from "../SubmitButton"
 
 export enum FormFieldType {
-    INPUT = 'input'
+    INPUT = 'input',
+    TEXTAREA = 'textaria',
+    PHONE_INPUT = 'phoneInput',
+    CHECKBOX = 'checkbox',
+    DATE_PICKER = 'datepicker',
+    SELECT = 'select',
+    SKELETON = 'skeleton',
 }
 const formSchema = z.object({
     username: z.string().min(2, {
         message: "Username must be at least 2 characters.",
     }),
 })
-
-
 const CustomerForm = () => {
+    const [isLoading, setIsLoading] = useState(false)
     // 1. Define your form.
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -37,7 +43,7 @@ const CustomerForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <div className="mb-12 space-y-4">
+                <div className="mb-8 space-y-2">
                     <h1 className="text-3xl">Wellcome Back ❤👏 </h1>
                     <p className="">Schedule your first appointment</p>
                 </div>
@@ -45,9 +51,31 @@ const CustomerForm = () => {
                 <CustomForm
                     control={form.control}
                     fieldType={FormFieldType.INPUT}
+                    name="name"
+                    label="Username"
+                    placeholder="DanhDev"
+                    iconSrc="/assets/icons/user.svg"
+                    iconAlt="user"
                 />
+                <CustomForm
+                    control={form.control}
+                    fieldType={FormFieldType.INPUT}
+                    name="email"
+                    label="Email"
+                    placeholder="danhdev@gmail.com"
+                    iconSrc="/assets/icons/email.svg"
+                    iconAlt="email"
+                />
+                <CustomForm
+                    control={form.control}
+                    fieldType={FormFieldType.PHONE_INPUT}
+                    name="phone"
+                    label="PhoneNumber"
+                    placeholder="(+84) 123456789"
 
-                <Button type="submit">Submit</Button>
+                />
+                <SubmitButton isLoading={isLoading} >
+                    Get Started 🚀 </SubmitButton>
             </form>
         </Form>
     )
