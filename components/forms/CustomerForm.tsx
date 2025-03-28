@@ -2,13 +2,14 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { set, z } from "zod"
 import {
     Form
 } from "@/components/ui/form"
 import CustomForm from "../CustomForm"
 import { useState } from "react"
 import SubmitButton from "../SubmitButton"
+import { UserFormValidation } from "@/lib/validation"
 
 export enum FormFieldType {
     INPUT = 'input',
@@ -19,26 +20,30 @@ export enum FormFieldType {
     SELECT = 'select',
     SKELETON = 'skeleton',
 }
-const formSchema = z.object({
-    username: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-})
+
 const CustomerForm = () => {
     const [isLoading, setIsLoading] = useState(false)
     // 1. Define your form.
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof UserFormValidation>>({
+        resolver: zodResolver(UserFormValidation),
         defaultValues: {
-            username: "",
+            name: "",
+            email: "",
+            phone: "",
         },
     })
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit({ name, email, phone }: z.infer<typeof UserFormValidation>) {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
-        console.log(values)
+        setIsLoading(true)
+        try {
+            const data = { name, email, phone }
+            //do something with backend database
+        } catch (error) {
+            console.log(error)
+        }
     }
     return (
         <Form {...form}>
